@@ -148,7 +148,7 @@ class LMDataset(Dataset):
         # Make sure you convert to the right type
         shifted = self.transcripts_shifted[idx]
         golden  = self.transcripts_golden[idx]
-        return torch.LongTensor(shifted), torch.LongTensor(golden)
+        return (torch.LongTensor(shifted), torch.LongTensor(golden))
     
     
     def collate_fn(self, batch: List[Tuple[torch.LongTensor, torch.LongTensor]]) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:

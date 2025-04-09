@@ -82,7 +82,7 @@ class LMTrainer(BaseTrainer):
         for i, batch in enumerate(dataloader):
             # TODO: Unpack batch from the dataloader
             # TODO: Move the batch elements to self.device
-            targets_shifted, targets_golden, lengths = zip(*batch)
+            targets_shifted, targets_golden, lengths = batch
             targets_shifted = torch.tensor(targets_shifted).to(self.device)
             targets_golden = torch.tensor(targets_golden).to(self.device)
             lengths = torch.tensor(lengths).to(self.device)
@@ -179,7 +179,7 @@ class LMTrainer(BaseTrainer):
         for i, batch in enumerate(dataloader):
             # TODO: Unpack batch
             # TODO: Move the batch elements to self.device
-            targets_shifted, targets_golden, lengths = zip(*batch)
+            targets_shifted, targets_golden, lengths = batch
             targets_shifted = torch.tensor(targets_shifted).to(self.device)
             targets_golden = torch.tensor(targets_golden).to(self.device)
             lengths = torch.tensor(lengths).to(self.device)
