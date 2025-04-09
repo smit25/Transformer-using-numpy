@@ -252,7 +252,7 @@ class LMTrainer(BaseTrainer):
         for epoch in range(self.current_epoch, self.current_epoch + epochs):
             
             # TODO: Train for one epoch
-            train_metrics, train_attn = self._train_epoch(self, train_dataloader)
+            train_metrics, train_attn = self._train_epoch(train_dataloader)
             
             # TODO: Validate
             val_metrics, val_attn = self._validate_epoch(val_dataloader)
