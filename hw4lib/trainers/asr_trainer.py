@@ -94,6 +94,7 @@ class ASRTrainer(BaseTrainer):
     
         # Initialize training variables
         self.model.train()
+        self.scaler = torch.cuda.amp.GradScaler()
         batch_bar = tqdm(total=len(dataloader), dynamic_ncols=True, leave=False, position=0, desc="[Training ASR]")
         running_ce_loss = 0.0
         running_ctc_loss = 0.0
@@ -126,7 +127,7 @@ class ASRTrainer(BaseTrainer):
                 
                 # TODO: Calculate CTC loss if needed
                 if self.ctc_weight > 0:
-                    ctc_loss = NotImplementedError
+                    ctc_loss = self.ctc_criterion(ctc_inputs, targets_golden, feat_lengths, transcript_lengths)
                     loss = ce_loss + self.ctc_weight * ctc_loss
                 else:
                     ctc_loss = torch.tensor(0.0)
@@ -144,7 +145,7 @@ class ASRTrainer(BaseTrainer):
             loss = loss / self.config['training']['gradient_accumulation_steps']
 
             # TODO: Backpropagate the loss
-            self.scaler = torch.cuda.amp.GradScaler(enabled = True)
+            self.scaler.scale(loss).backward()
 
             # Only update weights after accumulating enough gradients
             if (i + 1) % self.config['training']['gradient_accumulation_steps'] == 0:
@@ -421,7 +422,7 @@ class ASRTrainer(BaseTrainer):
                 if recognition_config['beam_width'] > 1:
                     # TODO: If you have implemented beam search, generate sequences using beam search
                     seqs, scores = generator.generate_beam(prompts, recognition_config['beam_width'], recognition_config['temperature'], recognition_config['repeat_penalty'])
-                    raise NotImplementedError # Remove if you implemented the beam search method
+                    # raise NotImplementedError # Remove if you implemented the beam search method
                     # Pick best beam
                     seqs = seqs[:, 0, :]
                     scores = scores[:, 0]
