@@ -148,7 +148,6 @@ class DecoderOnlyTransformer(nn.Module):
             raise ValueError("target_lengths must be provided during training")
         
         # TODO: Implement forward
-        device = x.device
         # TODO: Create padding mask for padded_targets on the same device as the input (use PadMask)
         pad_mask_dec = None
         if target_lengths is not None:
@@ -157,10 +156,7 @@ class DecoderOnlyTransformer(nn.Module):
         # TODO: Create causal mask to prevent attending to future tokens on the same device as the input (use CausalMask)
         causal_mask = CausalMask(padded_targets)
 
-        if pad_mask_dec is not None:
-            pad_mask_dec = pad_mask_dec.to(device)
-        if causal_mask is not None:
-            causal_mask = causal_mask.to(device)
+
 
         # TODO: Apply the embedding
         x = self.target_embedding(padded_targets)
@@ -168,6 +164,13 @@ class DecoderOnlyTransformer(nn.Module):
         x = self.positional_encoding(x)
         # TODO: Apply dropout 
         x = self.dropout(x)
+        
+        device = x.device
+
+        if pad_mask_dec is not None:
+            pad_mask_dec = pad_mask_dec.to(device)
+        if causal_mask is not None:
+            causal_mask = causal_mask.to(device)
 
         # TODO: Pass through all decoder layers, save attention masks
         runnint_att = {}
