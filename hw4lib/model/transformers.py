@@ -148,7 +148,7 @@ class DecoderOnlyTransformer(nn.Module):
             raise ValueError("target_lengths must be provided during training")
         
         # TODO: Implement forward
-
+        device = x.device
         # TODO: Create padding mask for padded_targets on the same device as the input (use PadMask)
         pad_mask_dec = None
         if target_lengths is not None:
@@ -156,6 +156,11 @@ class DecoderOnlyTransformer(nn.Module):
         
         # TODO: Create causal mask to prevent attending to future tokens on the same device as the input (use CausalMask)
         causal_mask = CausalMask(padded_targets)
+
+        if pad_mask_dec is not None:
+            pad_mask_dec = pad_mask_dec.to(device)
+        if causal_mask is not None:
+            causal_mask = causal_mask.to(device)
 
         # TODO: Apply the embedding
         x = self.target_embedding(padded_targets)
@@ -333,7 +338,7 @@ class EncoderDecoderTransformer(nn.Module):
         '''
 
         # TODO: Implement encode
-
+        device = padded_sources.device
         # TODO: Apply speech embedding
         x_enc, x_enc_lengths = self.source_embedding(padded_sources, source_lengths)
         
@@ -348,6 +353,9 @@ class EncoderDecoderTransformer(nn.Module):
 
         # TODO: Create source padding mask on the same device as the input
         pad_mask_src = PadMask(x_enc, x_enc_lengths)
+
+        if pad_mask_src is not None:
+            pad_mask_src = pad_mask_src.to(device)
 
         # TODO: Pass through encoder layers and save attention weights
         running_att = {}
@@ -388,7 +396,6 @@ class EncoderDecoderTransformer(nn.Module):
             running_att: Dictionary containing decoder attention weights
         '''
         # TODO: Implement decode
-
         # TODO: Create target padding mask on the same device as the input
         pad_mask_tgt = None
         if target_lengths is not None:
@@ -402,6 +409,7 @@ class EncoderDecoderTransformer(nn.Module):
 
         # TODO: Apply the embedding, positional encoding, and dropout
         x_dec = self.target_embedding(padded_targets)
+        device = x_dec.device
 
         # TODO: Apply positional encoding if not skipped
         # Shouldn't really be doing this. Included for completeness.  
@@ -410,6 +418,15 @@ class EncoderDecoderTransformer(nn.Module):
 
         # TODO: Apply dropout
         x_dec = self.dropout(x_dec)
+
+        if pad_mask_tgt is not None:
+            pad_mask_tgt = pad_mask_tgt.to(device)
+        if pad_mask_src is not None:
+            pad_mask_src = pad_mask_src.to(device)
+        if causal_mask is not None:
+            causal_mask = causal_mask.to(device)
+
+        encoder_output = encoder_output.to(device)
 
         # TODO: Pass through decoder layers and save attention weights
         running_att = {}
