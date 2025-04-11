@@ -341,8 +341,11 @@ class EncoderDecoderTransformer(nn.Module):
         '''
 
         # TODO: Implement encode
-        device = padded_sources.device
-        # TODO: Apply speech embedding
+        device = next(self.parameters()).device 
+
+        padded_sources = padded_sources.to(device)
+        source_lengths = source_lengths.to(device)
+                # TODO: Apply speech embedding
         x_enc, x_enc_lengths = self.source_embedding(padded_sources, source_lengths)
         
         # TODO: Apply positional encoding if not skipped
@@ -412,7 +415,7 @@ class EncoderDecoderTransformer(nn.Module):
 
         # TODO: Apply the embedding, positional encoding, and dropout
         x_dec = self.target_embedding(padded_targets)
-        device = x_dec.device
+        device = next(self.parameters()).device 
 
         # TODO: Apply positional encoding if not skipped
         # Shouldn't really be doing this. Included for completeness.  
