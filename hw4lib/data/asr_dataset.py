@@ -297,7 +297,7 @@ class ASRDataset(Dataset):
         batch_feats = [feat.transpose(0, 1) for feat in batch_feats] 
         # print(batch_feats)
 
-        # batch_feats = [feat[:self.feat_max_len] if len(feat) > self.feat_max_len else feat for feat in batch_feats]
+        batch_feats = [feat[:self.feat_max_len] if len(feat) > self.feat_max_len else feat for feat in batch_feats]
 
         # TODO: Collect feature lengths from the batch into a tensor
         # Note: Use list comprehension to collect the feature lengths from the batch   
