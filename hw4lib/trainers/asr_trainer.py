@@ -124,13 +124,10 @@ class ASRTrainer(BaseTrainer):
                 # TODO: Calculate CE loss
                 ce_loss = self.ce_criterion(seq_out.view(-1, seq_out.size(-1)), targets_golden.view(-1))
 
-                print(feat_lengths.shape)
-                print(transcript_lengths.shape)
-                
                 
                 # TODO: Calculate CTC loss if needed
                 if self.ctc_weight > 0:
-                    ctc_loss = self.ctc_criterion(ctc_inputs["log_probs"], targets_golden, feat_lengths, transcript_lengths)
+                    ctc_loss = self.ctc_criterion(ctc_inputs["log_probs"], targets_golden, ctc_inputs["lengths"], transcript_lengths)
                     loss = ce_loss + self.ctc_weight * ctc_loss
                 else:
                     ctc_loss = torch.tensor(0.0)
