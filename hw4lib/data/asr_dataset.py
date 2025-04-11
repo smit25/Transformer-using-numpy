@@ -294,10 +294,14 @@ class ASRDataset(Dataset):
         # Note: Use list comprehension to collect the features from the batch   
         batch_feats, batch_shifted, batch_golden  = zip(*batch)
 
+        batch_feats = [feat.transpose(0, 1) for feat in batch_feats] 
+        # print(batch_feats)
+
+        # batch_feats = [feat[:self.feat_max_len] if len(feat) > self.feat_max_len else feat for feat in batch_feats]
+
         # TODO: Collect feature lengths from the batch into a tensor
         # Note: Use list comprehension to collect the feature lengths from the batch   
         feat_lengths = torch.LongTensor([len(feat) for feat in batch_feats]) # B
-        batch_feats = [feat.transpose(0, 1) for feat in batch_feats] 
 
         # TODO: Pad features to create a batch of fixed-length padded features
         # Note: Use torch.nn.utils.rnn.pad_sequence to pad the features (use pad_token as the padding value)
